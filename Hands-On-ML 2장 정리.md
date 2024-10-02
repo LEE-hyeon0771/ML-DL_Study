@@ -30,4 +30,20 @@
 
 이런식으로 카테고리를 나누고 비율을 보는 형식.
 
+### 데이터 시각화
+- 데이터 포인트가 많이 겹치는 경우 투명도 alpha를 낮춰서 겹치는 영역을 더 진하게 표시하여 데이터의 밀집도를 직관적으로 파악함.
+- alpha : 0~1로 설정. 숫자 낮을 수록 점들이 더 투명하게 표현됨.
+
+![image](https://github.com/user-attachments/assets/027053c7-a914-4131-a664-39215b679adc)
+
+### 상관관계 조사
+- corr를 사용.
+- 1에 가까우면 강한 양의 상관관계, -1에 가까우면 강한 음의 상관관계
+- 상관관계가 매우 강한 경우 양의 상관관계(양의 기울기를 가짐)
+![image](https://github.com/user-attachments/assets/838e211a-a703-4cbd-90b9-9a1983fa1f7b)
+
+이 상태에서 해석을 해보면, median_house_value는 median_income이 올라갈 때 증가, median_house_value는 latitude와 음의 상관관계를 가지므로 북쪽으로 갈수록 주택 가격이 조금씩 내려감.
+
+
+
 
