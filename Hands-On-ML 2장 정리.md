@@ -40,6 +40,7 @@
 - corr를 사용.
 - 1에 가까우면 강한 양의 상관관계, -1에 가까우면 강한 음의 상관관계
 - 상관관계가 매우 강한 경우 양의 상관관계(양의 기울기를 가짐)
+
 ![image](https://github.com/user-attachments/assets/838e211a-a703-4cbd-90b9-9a1983fa1f7b)
 
 이 상태에서 해석을 해보면, median_house_value는 median_income이 올라갈 때 증가, median_house_value는 latitude와 음의 상관관계를 가지므로 북쪽으로 갈수록 주택 가격이 조금씩 내려감.
@@ -90,10 +91,14 @@ num_pipeline = make_pipeline(SimpleImputer(strategy="median"), StandardScaler())
 
 ### 과소적합과 과대적합
 - 과소적합 : 특성들이 좋은 예측을 만들 만큼 충분한 정보를 제공하지 못했거나 모델이 충분히 강력하지 못하다는 사실
+
 ![image](https://github.com/user-attachments/assets/45ff8f2d-5a8d-4916-94ba-01565d9b572d)
+
 RMSE를 통해서 체크해본 결과 예측오차가 68000대임.
 - 과대적합 : train 데이터에 너무 적합되어서 test 데이터에서 객관적인 예측이 힘든 상태.
+
 ![image](https://github.com/user-attachments/assets/7b4610b7-c533-4299-ad13-2b671c2763bd)
+
 RMSE 값이 아예 0.0이 되어버림.
 - 교차검증/k-fold 검증을 통해서 정확한 모델 성능을 알 수 있음.
 ```
