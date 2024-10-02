@@ -44,6 +44,80 @@
 
 이 상태에서 해석을 해보면, median_house_value는 median_income이 올라갈 때 증가, median_house_value는 latitude와 음의 상관관계를 가지므로 북쪽으로 갈수록 주택 가격이 조금씩 내려감.
 
+### One-Hot-Encoding
+- 누가봐도 비슷한 특성을 가진 카테고리이지만, 머신러닝 알고리즘이 가까이 있는 두 값을 떨어져 있는 두 값보다 더 비슷하다고 생각하는 문제점을 방지
+- 카테고리별 이진 특성을 만들어 해결함.
+- 희소행렬을 기본으로 함.
+ ```
+from sklearn.preprocessing import OneHotEncoder
+cat_encoder = OneHotEncoder()
+housing_cat_1hot = cat_encoder.fit_transform(housing_cat)
+```
+- 넘파이 배열을 출력하기 위해서는 toarray() 메서드를 사용하거나, OneHotEncoder(sparse_output=False)로 설정해야 함.
+- 간단하게 get_dummies()를 사용하여 특정 column에 대한 원-핫을 볼 수도 있음.
 
+### 스케일링
+- 머신러닝 알고리즘을 작동시키기 위해 입력된 숫자 특성들의 스케일을 하나로 맞추는 작업
+- MinMaxScaler(정규화) : 데이터에서 최솟값을 뺀 후 최댓값과 최솟값의 차이로 나눔.
+```
+from sklearn.preprocessing import MinMaxScaler
+min_max_scaler = MinMaxScaler(feature_range=(-1, 1))
+housing_num_min_max_scaled = min_max_scaler.fit_transform(housing_num)
+```
+- StandardScaler(표준화) : 평균을 뺀 후 표준 편차로 나눔. 이상치에 영향을 덜 받음.
+```
+from sklearn.preprocessing import StandardScaler
+std_scaler = StandardScaler()
+housing_num_std_scaled = std_scaler.fit_transform(housing_num)
+```
 
+### 파이프라인
+- Pipeline
+```
+from sklearn.pipeline import Pipeline
 
+num_pipeline = Pipeline([
+    ("impute", SimpleImputer(strategy="median")),
+    ("standardize", StandardScaler()),
+])
+```
+- make_pipeline : 파이프라인의 이름을 짓는 것이 귀찮을 때
+```
+from sklearn.pipeline import make_pipeline
+
+num_pipeline = make_pipeline(SimpleImputer(strategy="median"), StandardScaler())
+```
+
+### 과소적합과 과대적합
+- 과소적합 : 특성들이 좋은 예측을 만들 만큼 충분한 정보를 제공하지 못했거나 모델이 충분히 강력하지 못하다는 사실
+![image](https://github.com/user-attachments/assets/45ff8f2d-5a8d-4916-94ba-01565d9b572d)
+RMSE를 통해서 체크해본 결과 예측오차가 68000대임.
+- 과대적합 : train 데이터에 너무 적합되어서 test 데이터에서 객관적인 예측이 힘든 상태.
+![image](https://github.com/user-attachments/assets/7b4610b7-c533-4299-ad13-2b671c2763bd)
+RMSE 값이 아예 0.0이 되어버림.
+- 교차검증/k-fold 검증을 통해서 정확한 모델 성능을 알 수 있음.
+```
+from sklearn.model_selection import cross_val_score
+
+tree_rmses = -cross_val_score(tree_reg, housing, housing_labels,
+                              scoring="neg_root_mean_squared_error", cv=10)
+pd.Series(tree_rmses).describe()
+```
+cross_val_score를 통해서 교차검증을 쉽게 할 수 있음.
+
+- 오버피팅을 해결하기 위해서는 모델을 단순화, 제한, 더 많은 train 데이터를 모아야함.
+- 앙상블 모델링을 위해서 하이퍼파라미터 조정 보다는 여러 종류의 머신러닝 알고리즘을 시도하고 가능성 높은 2~5개 정도의 모델을 선정하는 것이 중요함.
+
+### 모델 튜닝
+1. GridSearchCV : 탐색하고자 하는 하이퍼파라미터와 시도해볼 값을 지정하여 자동으로 교차 검증을 사용해 가능한 모든 하이퍼파라미터 조합을 평가함.(곱의 법칙 갯수만큼)
+- best_params_ : 최상의 성능을 낼 수 있는 파라미터 조합.
+- cv_results_ : 하이퍼파라미터 조합의 점수 보기 가능
+2. RnadomizedSearchCV : 가능한 모든 조합을 시도하는 대신 각 반복마다 하이퍼파라미터에 임의의 수를 대입하여 지정한 횟수만큼 평가한다.
+- 하이퍼파라미터 값이 연속적이면（또는 이산적이지만 가능한 값이 많다면） 랜덤 서치를 1,000번 실행했을 때 각 하이퍼파라미터마다 1.000개의 다른 값을 탐색한다.
+- 그리드 서치에 가능한 값을 10개 추가하면 훈련 시간이 10배 더 늘어나지만, 랜덤 서치에 추가하면 탐색 시간이 늘어나지 않는다.
+- 지정한 반복 횟수만큼 실행할 수 있다.
+
+### 최상의 모델과 오차분석
+- feature_importances를 뽑아서 중요도 점수를 내림차순으로 정렬하고 중요도를 본다.
+- 유용하지 않은 feature들은 제거한다.
+- 신뢰구간을 설정하여 오차를 분석하고 교차 검증을 사용해 측정한 것보다 squared_errors 성능이 조금 낮게 나올 수 있지만, 하이퍼파라미터 튜닝을 많이 한 탓이므로 테스트 세트 성능 수치만을 높이기 위한 하이퍼파라미터 튜닝은 오히려 새로운 데이터에 일반화 되지 못하므로 독이 될 수 있다. 지양하자!!!!
