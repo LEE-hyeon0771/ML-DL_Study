@@ -68,6 +68,7 @@ RandomForestClassifier는 BaggingClassifier의 매개변수를 모두 가지고 
 
 **1. AdaBoost**
 - 이전 모델이 과소적합했던 훈련 샘플의 가중치를 더 높여서 새로운 예측기가 학습하기 어려운 샘플에 점점 더 맞춰지게 되는 것. 샘플의 가중치 업데이트 방식
+
 ![image](https://github.com/user-attachments/assets/8efa57f4-f01e-43d5-bf87-4f367f1cee48)
 
 ![image](https://github.com/user-attachments/assets/dba27794-7227-43e1-b96a-2ce6938a4996)
@@ -115,6 +116,7 @@ RandomForestClassifier는 BaggingClassifier의 매개변수를 모두 가지고 
 ![image](https://github.com/user-attachments/assets/b924ae75-6cdb-48a8-ae8b-1a31cba832d2)
 
 ![image](https://github.com/user-attachments/assets/d4e04964-eb6e-4424-8804-3392a2ca6067)
+
 ![image](https://github.com/user-attachments/assets/cfc11586-a660-4b89-8956-e098542bc9cf)
 
 이전 92%보다 더 높은 수치를 기록.
